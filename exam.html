@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS Cloud Practitioner Mock Exam</title>
+    <link rel="stylesheet" href="exam-styles.css">
+</head>
+<body>
+    <!-- Mode Selection Screen -->
+    <div id="modeSelection" class="mode-selection">
+        <div class="mode-container">
+            <div class="exam-header">
+                <div class="aws-logo">AWS</div>
+                <h1>Cloud Practitioner Mock Exam</h1>
+                <p class="exam-subtitle">CLF-C02 Practice Test</p>
+            </div>
+
+            <div class="mode-cards">
+                <div class="mode-card" onclick="startExam('timed')">
+                    <div class="mode-icon">⏱️</div>
+                    <h2>Timed Exam Mode</h2>
+                    <div class="mode-details">
+                        <p><strong>65 questions</strong></p>
+                        <p><strong>90 minutes</strong></p>
+                        <p>Simulates the real AWS exam experience</p>
+                        <p>Questions are randomized</p>
+                        <p>Review answers at the end</p>
+                    </div>
+                    <button class="mode-btn mode-btn-primary">Start Timed Exam</button>
+                </div>
+
+                <div class="mode-card" onclick="startExam('practice')">
+                    <div class="mode-icon">📚</div>
+                    <h2>Practice Mode</h2>
+                    <div class="mode-details">
+                        <p><strong>65 questions</strong></p>
+                        <p><strong>Untimed</strong></p>
+                        <p>Learn at your own pace</p>
+                        <p>Instant feedback on answers</p>
+                        <p>Detailed explanations provided</p>
+                    </div>
+                    <button class="mode-btn mode-btn-secondary">Start Practice Mode</button>
+                </div>
+            </div>
+
+            <div class="back-link">
+                <a href="index.html">← Back to Flashcards</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Exam Screen -->
+    <div id="examScreen" class="exam-screen hidden">
+        <!-- Top Bar -->
+        <div class="exam-topbar">
+            <div class="exam-brand">
+                <div class="aws-logo-small">AWS</div>
+                <span>Cloud Practitioner Exam</span>
+            </div>
+            <div class="exam-timer" id="timer">
+                <span class="timer-label">Time Remaining:</span>
+                <span class="timer-value" id="timerValue">90:00</span>
+            </div>
+        </div>
+
+        <!-- Main Exam Area -->
+        <div class="exam-layout">
+            <!-- Question Navigator Sidebar -->
+            <div class="question-navigator">
+                <div class="navigator-header">
+                    <h3>Questions</h3>
+                    <div class="navigator-stats">
+                        <div class="nav-stat">
+                            <span class="stat-dot answered"></span>
+                            <span>Answered: <strong id="answeredCount">0</strong></span>
+                        </div>
+                        <div class="nav-stat">
+                            <span class="stat-dot flagged"></span>
+                            <span>Flagged: <strong id="flaggedCount">0</strong></span>
+                        </div>
+                        <div class="nav-stat">
+                            <span class="stat-dot unanswered"></span>
+                            <span>Unanswered: <strong id="unansweredCount">65</strong></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="navigator-grid" id="navigatorGrid">
+                    <!-- Question numbers will be populated by JS -->
+                </div>
+            </div>
+
+            <!-- Question Panel -->
+            <div class="question-panel">
+                <div class="question-header">
+                    <div class="question-info">
+                        <span class="question-number">Question <span id="currentQuestion">1</span> of 65</span>
+                        <span class="question-category" id="questionCategory">Cloud Concepts</span>
+                    </div>
+                    <button class="flag-btn" id="flagBtn" onclick="toggleFlag()">
+                        <span class="flag-icon">🚩</span>
+                        <span class="flag-text">Flag for Review</span>
+                    </button>
+                </div>
+
+                <div class="question-content">
+                    <div class="question-text" id="questionText">
+                        Loading question...
+                    </div>
+
+                    <div class="question-type-indicator" id="questionTypeIndicator">
+                        Select ONE answer
+                    </div>
+
+                    <div class="options-container" id="optionsContainer">
+                        <!-- Options will be populated by JS -->
+                    </div>
+
+                    <!-- Practice Mode Feedback -->
+                    <div class="answer-feedback hidden" id="answerFeedback">
+                        <div class="feedback-content">
+                            <div class="feedback-icon" id="feedbackIcon"></div>
+                            <div class="feedback-message" id="feedbackMessage"></div>
+                            <div class="feedback-explanation" id="feedbackExplanation"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation Controls -->
+                <div class="question-controls">
+                    <div class="control-left">
+                        <button class="exam-btn exam-btn-secondary" id="prevQuestionBtn" onclick="previousQuestion()">
+                            ← Previous
+                        </button>
+                    </div>
+                    <div class="control-center">
+                        <button class="exam-btn exam-btn-outline" onclick="clearAnswer()">
+                            Clear Answer
+                        </button>
+                    </div>
+                    <div class="control-right">
+                        <button class="exam-btn exam-btn-primary" id="nextQuestionBtn" onclick="nextQuestion()">
+                            Next →
+                        </button>
+                        <button class="exam-btn exam-btn-success hidden" id="submitExamBtn" onclick="confirmSubmit()">
+                            Submit Exam
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Screen -->
+    <div id="resultsScreen" class="results-screen hidden">
+        <div class="results-container">
+            <div class="results-header">
+                <div class="aws-logo">AWS</div>
+                <h1>Exam Results</h1>
+                <p class="results-subtitle">AWS Certified Cloud Practitioner</p>
+            </div>
+
+            <div class="score-card">
+                <div class="score-main">
+                    <div class="score-circle" id="scoreCircle">
+                        <svg viewBox="0 0 200 200">
+                            <circle cx="100" cy="100" r="90" class="score-bg"></circle>
+                            <circle cx="100" cy="100" r="90" class="score-fill" id="scoreFill"></circle>
+                        </svg>
+                        <div class="score-text">
+                            <div class="score-value" id="scoreValue">0</div>
+                            <div class="score-label">/ 1000</div>
+                        </div>
+                    </div>
+                    <div class="score-status" id="scoreStatus">
+                        <div class="status-badge" id="statusBadge">PASS</div>
+                        <p class="status-message" id="statusMessage">Congratulations! You passed!</p>
+                    </div>
+                </div>
+
+                <div class="score-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Correct Answers</span>
+                        <span class="detail-value" id="correctCount">0 / 65</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Percentage</span>
+                        <span class="detail-value" id="percentageScore">0%</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Time Taken</span>
+                        <span class="detail-value" id="timeTaken">0:00</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="domain-breakdown">
+                <h2>Performance by Domain</h2>
+                <div class="domain-grid">
+                    <div class="domain-card">
+                        <h3>Cloud Concepts</h3>
+                        <div class="domain-score">
+                            <div class="domain-bar">
+                                <div class="domain-bar-fill" id="domainBar1" style="width: 0%"></div>
+                            </div>
+                            <span class="domain-percentage" id="domainScore1">0%</span>
+                        </div>
+                        <p class="domain-weight">24% of exam</p>
+                    </div>
+
+                    <div class="domain-card">
+                        <h3>Security & Compliance</h3>
+                        <div class="domain-score">
+                            <div class="domain-bar">
+                                <div class="domain-bar-fill" id="domainBar2" style="width: 0%"></div>
+                            </div>
+                            <span class="domain-percentage" id="domainScore2">0%</span>
+                        </div>
+                        <p class="domain-weight">30% of exam</p>
+                    </div>
+
+                    <div class="domain-card">
+                        <h3>Technology & Services</h3>
+                        <div class="domain-score">
+                            <div class="domain-bar">
+                                <div class="domain-bar-fill" id="domainBar3" style="width: 0%"></div>
+                            </div>
+                            <span class="domain-percentage" id="domainScore3">0%</span>
+                        </div>
+                        <p class="domain-weight">34% of exam</p>
+                    </div>
+
+                    <div class="domain-card">
+                        <h3>Billing, Pricing & Support</h3>
+                        <div class="domain-score">
+                            <div class="domain-bar">
+                                <div class="domain-bar-fill" id="domainBar4" style="width: 0%"></div>
+                            </div>
+                            <span class="domain-percentage" id="domainScore4">0%</span>
+                        </div>
+                        <p class="domain-weight">12% of exam</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="results-actions">
+                <button class="exam-btn exam-btn-outline" onclick="reviewAnswers()">
+                    Review Answers
+                </button>
+                <button class="exam-btn exam-btn-primary" onclick="retakeExam()">
+                    Retake Exam
+                </button>
+                <a href="index.html" class="exam-btn exam-btn-secondary">
+                    Back to Flashcards
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="modal hidden">
+        <div class="modal-content">
+            <h2>Submit Exam?</h2>
+            <p>Are you sure you want to submit your exam?</p>
+            <p class="modal-warning" id="modalWarning"></p>
+            <div class="modal-actions">
+                <button class="exam-btn exam-btn-outline" onclick="closeModal()">
+                    Cancel
+                </button>
+                <button class="exam-btn exam-btn-success" onclick="submitExam()">
+                    Submit
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="exam-questions.js"></script>
+    <script src="exam.js"></script>
+</body>
+</html>
