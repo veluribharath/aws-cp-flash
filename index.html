@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS Cloud Practitioner Flashcards</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AWS Cloud Practitioner Flashcards</h1>
+            <p class="subtitle">Master AWS fundamentals for the CLF-C02 exam</p>
+        </header>
+
+        <div class="stats-bar">
+            <div class="stat">
+                <span class="stat-label">Progress:</span>
+                <span id="progress" class="stat-value">0/0</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Category:</span>
+                <select id="categoryFilter" class="category-select">
+                    <option value="all">All Categories</option>
+                    <option value="cloud-concepts">Cloud Concepts (24%)</option>
+                    <option value="security">Security & Compliance (30%)</option>
+                    <option value="technology">Technology & Services (34%)</option>
+                    <option value="billing">Billing, Pricing & Support (12%)</option>
+                </select>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Studied:</span>
+                <span id="studied" class="stat-value">0</span>
+            </div>
+        </div>
+
+        <div class="flashcard-container">
+            <div class="flashcard" id="flashcard">
+                <div class="flashcard-inner">
+                    <div class="flashcard-front">
+                        <div class="card-category" id="cardCategory"></div>
+                        <div class="card-content" id="question"></div>
+                        <div class="flip-hint">Click to reveal answer</div>
+                    </div>
+                    <div class="flashcard-back">
+                        <div class="card-category" id="cardCategoryBack"></div>
+                        <div class="card-content" id="answer"></div>
+                        <div class="flip-hint">Click to see question</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button id="prevBtn" class="btn btn-secondary">Previous</button>
+            <button id="shuffleBtn" class="btn btn-secondary">Shuffle</button>
+            <button id="nextBtn" class="btn btn-primary">Next</button>
+        </div>
+
+        <div class="keyboard-hints">
+            <span>Keyboard: Space (flip) | ← Previous | → Next | S (shuffle)</span>
+        </div>
+    </div>
+
+    <script src="flashcards-data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
